@@ -4,6 +4,8 @@ import { FormHandles } from '@unform/core';
 import { Form } from '@unform/web';
 import * as Yup from 'yup';
 
+import getValidationErrors from '../../utils/getValidationErrors';
+
 import logoImg from '../../assets/logo.svg';
 
 import Input from '../../components/Input';
@@ -16,6 +18,8 @@ const SignUp: React.FC = () => {
 
   const handleSubmit = useCallback(async (data: object) => {
     try {
+      formRef.current?.setErrors({});
+
       const schema = Yup.object().shape({
         name: Yup.string().required('Precisamos saber o seu nome :)'),
         email: Yup.string()
@@ -25,12 +29,15 @@ const SignUp: React.FC = () => {
           .min(8, 'Sua senha precisa ter no mínimo 8 (oito) caracteres')
           .required('Sem senha = sem acesso :3'),
       });
-
       await schema.validate(data, {
         abortEarly: false,
       });
     } catch (err) {
-      console.log(err);
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+      }
     }
   }, []);
 
@@ -43,7 +50,7 @@ const SignUp: React.FC = () => {
         <Form ref={formRef} onSubmit={handleSubmit}>
           <h1>Faça seu cadastro</h1>
 
-          <Input name="name" icon={FiUser} placeholder="E-mail" />
+          <Input name="name" icon={FiUser} placeholder="Nome" />
 
           <Input name="email" icon={FiMail} placeholder="E-mail" />
 
@@ -53,10 +60,8 @@ const SignUp: React.FC = () => {
             type="password"
             placeholder="Senha"
           />
-
           <Button type="submit">Cadastrar</Button>
         </Form>
-
         <a href="signup">
           <FiArrowLeft />
           Voltar para logon
