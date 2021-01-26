@@ -15,9 +15,18 @@ const ToastContainer: React.FC<ToastContainerProps> = ({ messages }) => {
     messages,
     message => message.id,
     {
-      from: { right: '120%' },
-      enter: { right: '0%' },
-      leave: { right: '120%' },
+      from: {
+        left: '120%',
+        transform: 'rotateY(0deg)',
+      },
+      enter: {
+        left: '0%',
+        transform: 'rotateY(288000deg)',
+      },
+      leave: {
+        right: '120%',
+        transform: 'rotateY(0deg)',
+      },
     },
   );
 
